@@ -295,15 +295,6 @@ bool move_piece(int from_x, int from_y, int to_x, int to_y) {
     return true;
 }
 
-
-void move_pawn(int from_x, int from_y, int to_x, int to_y) {
-    // Ensure we're moving a pawn
-    if (board[from_y][from_x].type == 'P') {
-        board[to_y][to_x] = board[from_y][from_x]; // Move the pawn
-        board[from_y][from_x].type = 0; // Clear the old square
-    }
-}
-
 // Function to deserialize the game_state string back into the board state
 void deserialize_board(const char* game_state) {
     printf("Deserializing game state: %s\n", game_state);
@@ -336,16 +327,6 @@ void deserialize_board(const char* game_state) {
     // Update turn
     turn = (game_state[128] == 'W') ? 0 : 1;
     printf("Turn updated to: %d\n", turn);
-}
-
-// Function to send the game state to the server
-void send_game_state(int socket, const char* game_state) {
-    send(socket, game_state, strlen(game_state), 0);
-}
-
-// Function to receive the game state from the server
-void receive_game_state2(int socket, char* game_state) {
-    recv(socket, game_state, 256, 0);  // Assume a max game state length of 256 bytes
 }
 
 
