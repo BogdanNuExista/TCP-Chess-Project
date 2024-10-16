@@ -405,6 +405,9 @@ void draw_board() {
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
+bool game_over = false;
+const char* winner = NULL;
+float restart_timer = 0.0f;
 
 void run_ui(int socket) {
     load_pieces();
@@ -453,6 +456,9 @@ void run_ui(int socket) {
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        if(!game_over) {
+
         draw_board();
 
         // Check if it's this player's turn
@@ -530,9 +536,33 @@ void run_ui(int socket) {
         UnloadSound(captureSound);
         UnloadSound(castleSound);
 
+        // Check for checkmate after each move
+            if (is_checkmate(WHITE)) {
+                game_over = true;
+                winner = "Black";
+                restart_timer = 5.0f;
+            } else if (is_checkmate(BLACK)) {
+                game_over = true;
+                winner = "White";
+                restart_timer = 5.0f;
+            }
+        } else {
+            // Draw game over screen
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 200});
+            char winnerText[50];
+            snprintf(winnerText, sizeof(winnerText), "%s won!", winner);
+            DrawText(winnerText, SCREEN_WIDTH/2 - MeasureText(winnerText, 40)/2, SCREEN_HEIGHT/2 - 50, 40, WHITE);
+
+        }
+
         EndDrawing();
     }
+     // Unload sounds
+    UnloadSound(moveSound);
+    UnloadSound(captureSound);
+    UnloadSound(castleSound);
 }
+
 
 void print_board_state() {
     printf("Current board state:\n");
