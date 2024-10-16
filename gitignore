@@ -1,0 +1,7 @@
+# Ignore the libs folder
+libs
+
+# Ignore the .vscode folder
+.vscode/
+
+.vscode
