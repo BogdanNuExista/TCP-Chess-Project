@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <ctype.h>
+#include <unistd.h>
 
 void initialize_game_state(char* game_state) {
     // Initial chess board setup (lowercase for white, uppercase for black)
@@ -72,27 +74,22 @@ void handle_game_session(int player1, int player2) {
     while (1) {
         char move[32] = {0};
         int received = recv(current_player, move, sizeof(move), 0);
-        
-        if (received > 0) {
+        // the moves that you recieve are validd moves because they are checked in the client side, in the ui.c file 
+        if (received > 0) { 
             printf("Received move: %s from player %d\n", 
-                   move, current_player == player1 ? 1 : 2);
+            move, current_player == player1 ? 1 : 2);
+        
+            update_game_state(game_state, move);
+            printf("Updated game state: %s\n", game_state);
             
-            if (1) { // Changed from is_valid_server_move for testing
-                update_game_state(game_state, move);
-                printf("Updated game state: %s\n", game_state);
-                
-                // Send updated game state to both players
-                send(player1, game_state, strlen(game_state), 0);
-                send(player2, game_state, strlen(game_state), 0);
-                
-                // Switch turns
-                int temp = current_player;
-                current_player = waiting_player;
-                waiting_player = temp;
-            } else {
-                printf("Invalid move received\n");
-                send(current_player, game_state, strlen(game_state), 0);
-            }
+            // Send updated game state to both players
+            send(player1, game_state, strlen(game_state), 0);
+            send(player2, game_state, strlen(game_state), 0);
+            
+            // Switch turns
+            int temp = current_player;
+            current_player = waiting_player;
+            waiting_player = temp;
         }
     }
 }
