@@ -19,3 +19,4 @@ Compile and test a program:
 - gcc test_raylib.c -o test_raylib -lraylib -lm -lpthread -ldl -lrt -lX11
 - ./test_raylib
 
+P.S. you can delete the big file from raylib/.git/objects/pack/ to save space, it's almost 400mb for some reason
